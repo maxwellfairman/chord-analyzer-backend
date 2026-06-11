@@ -16,7 +16,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-@app.post("/api/analyze")
+@app.post("/analyze")
 def analyze(req: NotesRequest):
     result = midiAnalysis(set(req.notes))
     return {"Chords with roots": result[0], "Chords without roots": result[1]}
