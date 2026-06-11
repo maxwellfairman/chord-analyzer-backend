@@ -6,7 +6,15 @@ app = FastAPI()
 
 class NotesRequest(BaseModel):
     notes: list[int]
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://chord-analyzer-frontend.vercel.app"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.post("/api/analyze")
 def analyze(req: NotesRequest):
     result = midiAnalysis(set(req.notes))
