@@ -10,7 +10,7 @@ then second entry has list of 2 best possible chords without roots [[quality, ex
 If there are not two possible options there will be just one entry. If no options then no entries.
 """
 MIN_SCORE = 12
-ROOT_BONUS = 7
+ROOT_BONUS = 2
 url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ35GC2ZTgWedF-oF2GzI-BWKLK4MzORDQQRLgf5RLHIMMsyBirckZkjHsf3b52FNCU4l11M8GvRtS2/pub?output=csv"
 #scoring matrix is based on how important each interval is for determining chord quality, as well as interactions between intervals
 EXPECTED = [
@@ -286,7 +286,8 @@ def chordQuality(iset: set[str]):
             else:
                 quality = 'min6'
         else:
-            quality = 'min'
+            if 'd7' not in iset:
+                quality = 'min'
     elif 'M3' in iset:
         if 'm7' in iset:
             quality = '7'
@@ -370,9 +371,10 @@ def analyzeChord(testChord: music21.chord.Chord):
                 if root in pitchClasses:
                     possibleRootChords.append([v, quality, extensions, root, bassName, score])
                     print(possibleRootChords[-1])
+                    print(vectorToChord(v))
                 else:
                     possibleRootlessChords.append([v, quality, extensions, root, bassName, score])
-                    print(extensions)
+                    #print(extensions)
     possibleRootChords.sort(key = lambda x: x[5], reverse = True)
     #print(possibleRootlessChords)
     possibleRootlessChords.sort(key = lambda x: x[5], reverse = True)
@@ -485,7 +487,7 @@ def midiAnalysis(pitches: set[int]):
     return webInfo
 
 #example usage with midi input, returns chord analysis with lists of dictionaries to send to website
-chordMidi = {60, 63, 67, 69}
+chordMidi = {60, 63, 69}
 analysis = midiAnalysis(chordMidi)
 chord = music21.chord.Chord(chordMidi)
 print(f"Chord {chord.pitchNames}")
