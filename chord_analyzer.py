@@ -455,6 +455,8 @@ def midiAnalysis(pitches: set[int]):
                 remove13 = True
         if("dim" in quality):
             infoDict["extensions"].remove("b5")
+        if("aug" in quality):
+            infoDict["extensions"].remove("#5")
         if(remove13):
             infoDict["extensions"].remove("13")
         webInfo[0].append(infoDict)
