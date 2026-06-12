@@ -119,7 +119,7 @@ def vectorsFromPitchesAndRoot(pitches: frozenset[int], root: int) -> list[list[s
 
     # 5ths
     "P5": {"A5", "d5", "d7"},
-    "A5": {"P4", "P11", "d5", "m13", "M13"},
+    "A5": {"P5", "P4", "P11", "d5", "m13", "M13"},
 
     # 13ths
     "m13": {"M13", "A5"},
@@ -489,7 +489,7 @@ def midiAnalysis(pitches: set[int]):
     return webInfo
 
 #example usage with midi input, returns chord analysis with lists of dictionaries to send to website
-chordMidi = {60, 63, 69}
+chordMidi = {63, 67, 71, 74}
 analysis = midiAnalysis(chordMidi)
 chord = music21.chord.Chord(chordMidi)
 print(f"Chord {chord.pitchNames}")
