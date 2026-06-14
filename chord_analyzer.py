@@ -269,13 +269,15 @@ def chordQuality(iset: set[str]):
     if 'm3' in iset:
         if 'd5' in iset:
             if 'd7' in iset:
-                quality = 'dim7'
+                if not ({'P11', 'A11', 'm13', 'M13'} & iset):
+                    quality = 'dim7'
             elif 'm7' in iset:
                 quality = 'min7'
             elif 'M7' in iset:
                 quality = 'minMaj7'
             else:
-                quality = 'dim'
+                if not ({'P11', 'A11', 'm13', 'M13'} & iset):
+                    quality = 'dim'
         elif 'm7' in iset:
             quality = 'min7'
         elif 'M7' in iset:
@@ -489,7 +491,7 @@ def midiAnalysis(pitches: set[int]):
     return webInfo
 
 #example usage with midi input, returns chord analysis with lists of dictionaries to send to website
-chordMidi = {63, 67, 71, 74}
+chordMidi = {60, 63, 69}
 analysis = midiAnalysis(chordMidi)
 chord = music21.chord.Chord(chordMidi)
 print(f"Chord {chord.pitchNames}")
