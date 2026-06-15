@@ -255,6 +255,7 @@ def chordQuality(iset: set[str]):
     #iset is intervalset
 
     quality = 'invalid'
+   
     if 'm3' in iset:
         if 'd5' in iset:
             if 'd7' in iset:
@@ -300,6 +301,8 @@ def chordQuality(iset: set[str]):
             quality = '7sus4'
         elif 'M7' in iset:
             quality = 'Maj7sus4'
+        elif ('m13' in iset or 'M13' in iset) and len(iset) < 4:
+            quality = 'invalid'
         else:
             quality = 'sus4'
     return quality
