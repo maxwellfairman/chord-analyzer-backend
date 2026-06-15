@@ -38,12 +38,6 @@ def validate(df):
         raise ValueError("Invalid row labels")
     if list(df.columns) != EXPECTED:
         raise ValueError("Invalid column labels")
-def load_matrix(url: str):
-    df = pd.read_csv(url, index_col=0)
-    validate(df) #needs to have correct row and column labels
-    df = df.replace(r'^\s*$', 0, regex=True)
-    df = df.fillna(0).astype(float).astype(int)
-    return df.values.tolist()
 
 MATRIX_PATH = os.path.join(os.path.dirname(__file__), "score_matrix.csv")
 
@@ -58,8 +52,7 @@ scoreMatrix = load_matrix(MATRIX_PATH)
 
 
 
-#test all 12 possible roots
-#for a possible root, make possible chords into a vector
+
 
 pcToName = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B']
 pitchesToVector = {
@@ -82,6 +75,8 @@ pitchesToVector = {
         "M13": 16
     }
 #caching this function since it is expensive and has a specific list of vectors for each pitch class collection
+#test all 12 possible roots
+#for a possible root, make possible chords into a vector
 @lru_cache (maxsize=None)
 def vectorsFromPitchesAndRoot(pitches: frozenset[int], root: int) -> list[list[str]]:
     """Takes a set of pitch classes, and a root (input as a pitch class), and returns a list of lists of strings that have possible classifications for 
@@ -171,11 +166,6 @@ def vectorsFromPitchesAndRoot(pitches: frozenset[int], root: int) -> list[list[s
     for c in chords:
         vectors.append(chordToVector(c))
     return tuple(tuple(v) for v in vectors)
-    #need to return immutable object because do not want to allow cache to be modified
-    #next need to prune possible chords based on exclusivities
-    #first need to add all possibilites, then will check each for exclusivities
-        #before adding possibilities, need to check if any of the exclusivities are in the vector already
-        #if multiple possibilites, needs to return all possibilities
 
 def chordToVector(intervals: list[str]):
     """Takes list of intervals and returns chord vector
@@ -351,7 +341,6 @@ def analyzeChord(testChord: music21.chord.Chord):
     possibleRootChords = []
     possibleRootlessChords = []
     bass = testChord.bass()
-    #bassName = bass.name
     bassPitchClass = bass.pitchClass
     bassName = pcToName[bassPitchClass]
     for root in range(12):
@@ -380,60 +369,44 @@ def midiToChord(pitches: set[int]) -> music21.chord.Chord:
     "takes set of midi numbers and returns a music21.chord.Chord"
     return music21.chord.Chord(pitches)     
 def _clean_extensions(quality: str, extensions: list[str]) -> list[str]:
-            exts = extensions.copy()
-            remove13 = False
-            if quality.endswith("maj6/9") or quality.endswith("min6/9"):
-                remove13 = True
-                exts.remove("9")
-            if quality.endswith("maj6") or quality.endswith("min6"):
-                remove13 = True
-            if "dim" in quality:
-                exts.remove("b5")
-                if "13" in exts:
-                    exts.remove("13")
-            if "aug" in quality:
-                exts.remove("#5")
-            if remove13 and "13" in exts:
-                exts.remove("13")
-            return exts
+    exts = extensions.copy()
+    remove13 = False
+    if quality.endswith("maj6/9") or quality.endswith("min6/9"):
+        remove13 = True
+        exts.remove("9")
+    if quality.endswith("maj6") or quality.endswith("min6"):
+        remove13 = True
+    if "dim" in quality:
+        exts.remove("b5")
+        if "13" in exts:
+            exts.remove("13")
+    if "aug" in quality:
+        exts.remove("#5")
+    if remove13 and "13" in exts:
+        exts.remove("13")
+    return exts
 def midiAnalysis(pitches: set[int]):
     """Accepts set of midi numbers for the pitches. Returns nested list with first entry describing chords with roots [quality, extensions, root, bass] then same with rootless chords."""
     chord = midiToChord(pitches)
     analysis = analyzeChord(chord)
     webInfo = [[], []]
     
-    for i in analysis[0]:
-        c = i[1:5]
-        
-        c[2] = pcToName[c[2]]
-        quality, extensions, root, bass = c
-       
-        infoDict = {
-            "quality": quality,
-            "extensions": _clean_extensions(quality, extensions),
-            "root": root,
-            "bass": bass
-        }
-        webInfo[0].append(infoDict)
-    for i in analysis[1]:
-        c = i[1:5]
-        #quality, extensions, root, bass
-        c[2] = pcToName[c[2]]
-        quality, extensions, root, bass = c
-        infoDict = {
-            "quality": quality,
-            "extensions": _clean_extensions(quality, extensions),
-            "root": root,
-            "bass": bass
-        }
-
-        webInfo[1].append(infoDict)
+    for idx in range(2):
+        for i in analysis[idx]:
+            quality, extensions, root, bass = i[1], i[2], pcToName[i[3]], i[4]
+            webInfo[idx].append({
+                "quality": quality,
+                "extensions": _clean_extensions(quality, extensions),
+                "root": root,
+                "bass": bass
+            })
     return webInfo
 
-#example usage with midi input, returns chord analysis with lists of dictionaries to send to website
-chordMidi = {60, 63, 69}
-analysis = midiAnalysis(chordMidi)
-chord = music21.chord.Chord(chordMidi)
-print(f"Chord {chord.pitchNames}")
-print(f"Possible chords with roots: {analysis[0]}\nPossible rootless chords: {analysis[1]}")
-#stream.show()
+if __name__ == "__main__":
+    #example usage with midi input, returns chord analysis with lists of dictionaries to send to website
+    chordMidi = {60, 63, 69}
+    analysis = midiAnalysis(chordMidi)
+    chord = music21.chord.Chord(chordMidi)
+    print(f"Chord {chord.pitchNames}")
+    print(f"Possible chords with roots: {analysis[0]}\nPossible rootless chords: {analysis[1]}")
+    #stream.show()
