@@ -291,7 +291,7 @@ def chordQuality(iset: set[str]):
         elif 'M13' in iset:
             if 'M9' in iset:
                 quality = 'maj6/9'
-            else:
+            elif not ({'A5', 'd5'} & iset):
                 quality = 'maj6'
         else: 
             quality = 'maj'
