@@ -275,7 +275,7 @@ def chordQuality(iset: set[str]):
         elif 'M13' in iset:
             if 'M9' in iset:
                 quality = 'min6/9'
-            else:
+            elif len(iset) > 3:
                 quality = 'min6'
         else:
             if 'd7' not in iset and not (len(iset) < 4 and 'm13' in iset):
@@ -292,7 +292,7 @@ def chordQuality(iset: set[str]):
         elif 'M13' in iset:
             if 'M9' in iset:
                 quality = 'maj6/9'
-            elif not ({'A5', 'd5'} & iset):
+            elif not ({'A5', 'd5'} & iset) and len(iset) > 3:
                 quality = 'maj6'
         else: 
             quality = 'maj'
