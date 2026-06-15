@@ -104,7 +104,7 @@ def vectorsFromPitchesAndRoot(pitches: frozenset[int], root: int) -> list[list[s
     "A9": {"M9", "P4"},
 
     # 3rds
-    "m3": {"M3", "P4"},
+    "m3": {"M3", "P4", "A5"},
     "M3": {"m3", "P4"},
 
     # 4ths/11ths
@@ -115,7 +115,7 @@ def vectorsFromPitchesAndRoot(pitches: frozenset[int], root: int) -> list[list[s
 
     # 5ths
     "P5": {"A5", "d5", "d7"},
-    "A5": {"P5", "P4", "P11", "d5", "m13", "M13"},
+    "A5": {"P5", "P4", "P11", "d5", "m13", "M13", "m3"},
 
     # 13ths
     "m13": {"M13", "A5"},
