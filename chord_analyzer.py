@@ -11,7 +11,7 @@ then second entry has list of 2 best possible chords without roots [[quality, ex
 If there are not two possible options there will be just one entry. If no options then no entries.
 """
 MIN_SCORE = 12
-ROOT_BONUS = 2
+ROOT_BONUS = 5
 
 #scoring matrix is based on how important each interval is for determining chord quality, as well as interactions between intervals
 EXPECTED = [
