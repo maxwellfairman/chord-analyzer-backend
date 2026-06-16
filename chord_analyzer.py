@@ -35,6 +35,7 @@ EXPECTED = [
 ]
 def validate(df):
     if list(df.index) != EXPECTED:
+        print(list(df.index))
         raise ValueError("Invalid row labels")
     if list(df.columns) != EXPECTED:
         raise ValueError("Invalid column labels")
@@ -407,7 +408,7 @@ def midiAnalysis(pitches: set[int]):
 
 if __name__ == "__main__":
     #example usage with midi input, returns chord analysis with lists of dictionaries to send to website
-    chordMidi = {60, 63, 69}
+    chordMidi = {60, 64, 67}
     analysis = midiAnalysis(chordMidi)
     chord = music21.chord.Chord(chordMidi)
     print(f"Chord {chord.pitchNames}")
