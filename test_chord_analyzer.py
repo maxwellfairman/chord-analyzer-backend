@@ -1,3 +1,4 @@
+#written with Claude
 import sys
 sys.path.insert(0, '.')
 from chord_analyzer import midiAnalysis
