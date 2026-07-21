@@ -1,4 +1,4 @@
-#written with Claude
+#this code for testing was written by Claude
 import sys
 sys.path.insert(0, '.')
 from chord_analyzer import midiAnalysis
